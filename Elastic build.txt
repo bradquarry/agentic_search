@@ -1,0 +1,354 @@
+GET review_index/_search
+
+GET review_index/_mapping
+
+# STEP 1: Deploy ELSER model (if not already deployed)
+POST _ml/trained_models/.elser_model_2_linux-x86_64/deployment/_start
+{
+  "number_of_allocations": 1,
+  "threads_per_allocation": 1
+}
+
+# STEP 2: Create inference endpoint (if not already created)
+PUT _inference/sparse_embedding/elser-inference
+{
+  "service": "elasticsearch",
+  "service_settings": {
+    "model_id": ".elser_model_2_linux-x86_64",
+    "num_allocations": 1,
+    "num_threads": 1
+  }
+}
+
+# STEP 3: Delete existing index (if it exists)
+DELETE review_index
+
+# STEP 4: Create enhanced index supporting all three search modes
+PUT review_index
+{
+  "mappings": {
+    "properties": {
+      "date": {
+        "type": "date",
+        "format": "yyyy-MM-dd"
+      },
+      "username": {
+        "type": "keyword"
+      },
+      "location": {
+        "type": "keyword"
+      },
+      "product": {
+        "type": "text",
+        "analyzer": "standard"
+      },
+      "stars": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "text",
+        "analyzer": "standard",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "review_text": {
+        "type": "text",
+        "analyzer": "standard",
+        "fields": {
+          "semantic": {
+            "type": "semantic_text",
+            "inference_id": "elser-inference"
+          },
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 1024
+          }
+        }
+      },
+      "helpful_votes": {
+        "type": "integer"
+      },
+      "verified": {
+        "type": "boolean"
+      }
+    }
+  },
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1,
+    "analysis": {
+      "analyzer": {
+        "standard": {
+          "type": "standard",
+          "stopwords": "_english_"
+        }
+      }
+    }
+  }
+}
+
+# STEP 5: Insert enhanced test data
+POST review_index/_bulk
+{"index": {"_id": "review_001"}}
+{"date": "2025-01-15", "username": "TechUser92", "location": "California", "product": "Apple Watch Series 10 GPS 46mm Black Titanium", "stars": 5, "title": "Amazing display upgrade", "review_text": "The larger display on Series 10 is incredible. Everything is more readable than my old Series 8. Always-on display is brighter and touch response feels precise. Battery gets me through full days with workout tracking and cellular calls. Health sensors are more accurate especially for sleep tracking.", "helpful_votes": 234, "verified": true}
+{"index": {"_id": "review_002"}}
+{"date": "2025-01-12", "username": "FitnessGuru", "location": "Texas", "product": "Apple Watch Series 10 GPS 42mm Silver Aluminum", "stars": 4, "title": "Great fitness tracking but battery drains", "review_text": "As someone who works out twice daily, this watch tracks everything perfectly. Heart rate monitoring during intense workouts is spot on. Workout detection features are excellent and ECG readings give confidence. Only complaint is battery life with heavy GPS usage during long runs.", "helpful_votes": 156, "verified": true}
+{"index": {"_id": "review_003"}}
+{"date": "2025-01-10", "username": "BusinessPro", "location": "New York", "product": "Apple Watch Series 10 Cellular 46mm Titanium", "stars": 5, "title": "Perfect professional companion", "review_text": "Titanium construction feels premium while remaining lightweight. Perfect for business meetings where I stay connected without checking phone. Cellular feature works flawlessly for calls during Central Park runs. Screen brightness excellent even in bright conference rooms.", "helpful_votes": 189, "verified": true}
+{"index": {"_id": "review_004"}}
+{"date": "2025-01-08", "username": "HealthFirst", "location": "Florida", "product": "Apple Watch Series 10 GPS 42mm Rose Gold", "stars": 5, "title": "Health monitoring saved my life", "review_text": "This device detected irregular heart rhythm leading to discovering serious cardiac condition. Fall detection activated when I fainted and called emergency services automatically. Daily activity rings and meditation reminders keep me motivated. Period tracking accurate for family planning.", "helpful_votes": 467, "verified": true}
+{"index": {"_id": "review_005"}}
+{"date": "2025-01-06", "username": "CorpManager", "location": "Illinois", "product": "Apple Watch Series 10 Cellular 46mm Steel", "stars": 4, "title": "Great for business with minor issues", "review_text": "Essential for managing calendar notifications and taking calls during meetings. Larger screen makes reading messages much easier. Always-on display works well in bright outdoor meetings. Occasional app switching lag and Siri recognition issues in noisy environments.", "helpful_votes": 98, "verified": true}
+{"index": {"_id": "review_006"}}
+{"date": "2025-01-04", "username": "Student2025", "location": "Massachusetts", "product": "Apple Watch Series 10 GPS 42mm Midnight", "stars": 3, "title": "Good but expensive for students", "review_text": "Major purchase decision for college student budget. Delivers on step tracking around campus and sleep monitoring during exam periods. Study timers and breathing reminders help manage stress. Many premium features require additional subscriptions adding to cost.", "helpful_votes": 72, "verified": true}
+{"index": {"_id": "review_007"}}
+{"date": "2025-01-02", "username": "ActiveSenior", "location": "Arizona", "product": "Apple Watch Series 10 Cellular 46mm Silver", "stars": 5, "title": "Senior friendly with emergency features", "review_text": "At 72 years old, worried about complexity but interface surprisingly intuitive. Large display makes text readable without glasses. Medication reminders incredibly helpful and family location sharing provides peace of mind. Emergency features give confidence during solo walks.", "helpful_votes": 203, "verified": true}
+{"index": {"_id": "review_008"}}
+{"date": "2024-12-30", "username": "MountainClimber", "location": "Colorado", "product": "Apple Watch Series 10 GPS Titanium Orange Band", "stars": 4, "title": "Excellent for outdoor activities", "review_text": "Primary use for hiking and climbing in Rocky Mountains. Titanium case withstands impacts against rocks. Battery provides 8 hours continuous GPS tracking on long hikes. Temperature sensor matches handheld devices. GPS accuracy inconsistent in deep canyons with elevation errors.", "helpful_votes": 134, "verified": true}
+{"index": {"_id": "review_009"}}
+{"date": "2024-12-28", "username": "NewMomLife", "location": "Washington", "product": "Apple Watch Series 10 GPS 42mm Starlight", "stars": 5, "title": "Essential for new parents", "review_text": "Invaluable for staying connected without disturbing baby sleep. Haptic notifications allow silent message checking during feeding times. Sleep tracking helps understand fragmented rest patterns. Timer functions perfect for tracking feeding schedules and nap times.", "helpful_votes": 278, "verified": true}
+{"index": {"_id": "review_010"}}
+{"date": "2024-12-26", "username": "TechSkeptic", "location": "Ohio", "product": "Apple Watch Series 10 GPS 46mm Midnight", "stars": 3, "title": "Surprisingly useful despite doubts", "review_text": "Thought smartwatches were overpriced gadgets until spouse convinced me. After three weeks genuinely surprised by utility. Weather glances eliminate phone checking and calendar notifications keep me punctual. Step tracking motivated increased walking per doctor recommendations.", "helpful_votes": 89, "verified": true}
+
+# STEP 6: Verify the mapping works for all search types
+
+# Test keyword search
+POST review_index/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "battery",
+      "fields": ["title^2", "review_text"],
+      "type": "best_fields"
+    }
+  }
+}
+
+# Test semantic search  
+POST review_index/_search
+{
+  "query": {
+    "semantic": {
+      "field": "review_text.semantic",
+      "query": "battery life issues"
+    }
+  }
+}
+
+# Test date browse
+POST review_index/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "sort": [
+    {"date": {"order": "desc"}}
+  ]
+}
+
+# Create user_profile index with comprehensive user data
+PUT user_profile
+{
+  "mappings": {
+    "properties": {
+      "username": {
+        "type": "keyword"
+      },
+      "full_name": {
+        "type": "text"
+      },
+      "age": {
+        "type": "integer"
+      },
+      "occupation": {
+        "type": "text"
+      },
+      "location": {
+        "type": "keyword"
+      },
+      "income_level": {
+        "type": "keyword"
+      },
+      "annual_income": {
+        "type": "integer"
+      },
+      "has_credit_card": {
+        "type": "boolean"
+      },
+      "credit_limit": {
+        "type": "integer"
+      },
+      "budget_conscious": {
+        "type": "boolean"
+      },
+      "interests": {
+        "type": "keyword"
+      },
+      "past_reviews": {
+        "type": "nested",
+        "properties": {
+          "product": {
+            "type": "text"
+          },
+          "rating": {
+            "type": "integer"
+          },
+          "date": {
+            "type": "date",
+            "format": "yyyy-MM-dd"
+          },
+          "review_text": {
+            "type": "text"
+          }
+        }
+      },
+      "past_purchases": {
+        "type": "nested",
+        "properties": {
+          "item": {
+            "type": "text"
+          },
+          "category": {
+            "type": "keyword"
+          },
+          "price": {
+            "type": "float"
+          },
+          "purchase_date": {
+            "type": "date",
+            "format": "yyyy-MM-dd"
+          }
+        }
+      },
+      "preferences": {
+        "type": "object",
+        "properties": {
+          "price_sensitivity": {
+            "type": "keyword"
+          },
+          "brand_loyalty": {
+            "type": "keyword"
+          },
+          "feature_priorities": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}
+
+# Insert Student2025's profile
+POST user_profile/_doc/Student2025
+{
+  "username": "Student2025",
+  "full_name": "Alex Chen",
+  "age": 20,
+  "occupation": "College Student - Computer Science Major",
+  "location": "Massachusetts",
+  "income_level": "low",
+  "annual_income": 8000,
+  "has_credit_card": true,
+  "credit_limit": 500,
+  "budget_conscious": true,
+  "interests": ["technology", "fitness", "studying", "budget tech"],
+  "past_reviews": [
+    {
+      "product": "Apple Watch Series 10 GPS 42mm Midnight",
+      "rating": 3,
+      "date": "2025-01-04",
+      "review_text": "Major purchase decision for college student budget. Delivers on step tracking around campus and sleep monitoring during exam periods. Study timers and breathing reminders help manage stress. Many premium features require additional subscriptions adding to cost."
+    }
+  ],
+  "past_purchases": [
+    {
+      "item": "Xiaomi Mi Band 6",
+      "category": "fitness_tracker",
+      "price": 35.99,
+      "purchase_date": "2024-03-15"
+    },
+    {
+      "item": "Anker Wireless Earbuds",
+      "category": "audio",
+      "price": 29.99,
+      "purchase_date": "2024-06-20"
+    },
+    {
+      "item": "Generic Phone Case",
+      "category": "accessories",
+      "price": 12.99,
+      "purchase_date": "2024-09-01"
+    },
+    {
+      "item": "USB-C Hub for Laptop",
+      "category": "computer_accessories",
+      "price": 24.99,
+      "purchase_date": "2024-11-10"
+    }
+  ],
+  "preferences": {
+    "price_sensitivity": "very_high",
+    "brand_loyalty": "low",
+    "feature_priorities": ["basic_fitness_tracking", "battery_life", "study_tools", "no_subscriptions"]
+  }
+}
+
+
+PUT user_profile/_doc/TechUser92
+{
+  "username": "TechUser92",
+  "occupation": "Senior Software Engineer",
+  "annual_income": 185000,
+  "credit_limit": 50000,
+  "past_purchases": [
+    {
+      "product": "MacBook Pro 16\" M3 Max",
+      "price": 3999,
+      "date": "2024-11-15"
+    },
+    {
+      "product": "iPhone 15 Pro Max 1TB",
+      "price": 1599,
+      "date": "2024-09-20"
+    },
+    {
+      "product": "Sony WH-1000XM5",
+      "price": 399,
+      "date": "2024-08-10"
+    },
+    {
+      "product": "iPad Pro 12.9\" with Magic Keyboard",
+      "price": 1798,
+      "date": "2024-06-05"
+    },
+    {
+      "product": "Herman Miller Aeron Chair",
+      "price": 1395,
+      "date": "2024-03-12"
+    }
+  ],
+  "past_reviews": [
+    {
+      "product": "Apple Watch Series 9",
+      "rating": 5,
+      "review_text": "Excellent upgrade from my Series 7. The S9 chip is noticeably faster, and the on-device Siri is game-changing for my workflow. Double tap gesture is incredibly convenient during meetings. Worth every penny for the productivity gains alone.",
+      "date": "2024-01-20"
+    }
+  ],
+  "preferences": {
+    "price_sensitivity": "low",
+    "feature_priorities": ["latest technology", "premium materials", "ecosystem integration", "productivity features", "health tracking"],
+    "brand_loyalty": "high",
+    "upgrade_frequency": "annual"
+  },
+  "demographic": {
+    "age": 32,
+    "location": "San Francisco, CA",
+    "lifestyle": "tech enthusiast",
+    "fitness_level": "active"
+  }
+}

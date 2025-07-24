@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Watch Series 10 Reviews - Search Demo</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        
+        .main-container {
+            min-height: 100vh;
+            padding: 24px;
+        }
+        
+        .content-area {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        
+        .header-card {
+            text-align: center;
+            padding: 40px 32px;
+        }
+        
+        .logo {
+            width: 240px;
+            height: 240px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 16px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+            overflow: hidden;
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 16px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #1e293b, #475569);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+        
+        .search-modes-instruction {
+            color: #64748b;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: left;
+            margin-bottom: 20px;
+            padding-left: 4px;
+        }
+        
+        .mode-toggles {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .mode-btn {
+            padding: 12px 20px;
+            background: transparent;
+            color: #64748b;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mode-btn.active {
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .mode-btn.active.agentic {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+        }
+        
+        .mode-btn.active.ai {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .mode-btn.active.keyword {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+        }
+        
+        .mode-btn.active.date {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+        
+        .mode-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .mode-btn:hover:not(.active) {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            transform: translateY(-1px);
+        }
+        
+        .mode-btn.agentic:hover:not(.active) {
+            background: rgba(168, 85, 247, 0.1);
+            color: #a855f7;
+        }
+        
+        .mode-btn.ai:hover:not(.active) {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        
+        .mode-btn.keyword:hover:not(.active) {
+            background: rgba(14, 165, 233, 0.1);
+            color: #0ea5e9;
+        }
+        
+        .mode-btn.date:hover:not(.active) {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+        
+        .search-section {
+            margin-bottom: 24px;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 1px solid rgba(203, 213, 225, 0.6);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #1e293b;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .mode-description:not(.keyword):not(.date):not(.agentic) .search-input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        
+        .mode-description.keyword .search-input:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        
+        .search-input::placeholder {
+            color: #94a3b8;
+        }
+        
+        .search-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        .search-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .keyword-search-btn {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+        }
+        
+        .keyword-search-btn:hover {
+            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+        }
+        
+        .ai-search-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        }
+        
+        .ai-search-btn:hover {
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .mode-description {
+            background: rgba(16, 185, 129, 0.08);
+            border-left: 4px solid #10b981;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #475569;
+            margin-top: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            min-height: 140px;
+        }
+        
+        .mode-description.keyword {
+            background: rgba(14, 165, 233, 0.08);
+            border-left-color: #0ea5e9;
+        }
+        
+        .mode-description.date {
+            background: rgba(245, 158, 11, 0.08);
+            border-left-color: #f59e0b;
+        }
+        
+        .mode-description.agentic {
+            background: rgba(168, 85, 247, 0.08);
+            border-left-color: #a855f7;
+        }
+
+        /* User Profile Switcher Styles */
+        .user-profile-switcher {
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+            border: 2px solid #a855f7;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(168, 85, 247, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .user-profile-switcher::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        .profile-switcher-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #6b21a8;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .profile-switcher-subtitle {
+            font-size: 14px;
+            color: #7c3aed;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .profile-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .profile-btn {
+            background: white;
+            border: 2px solid #a855f7;
+            color: #6b21a8;
+            padding: 16px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(168, 85, 247, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+        
+        .profile-btn:hover {
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(168, 85, 247, 0.4);
+        }
+        
+        .profile-btn:hover:before {
+            left: 0;
+        }
+        
+        .profile-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .profile-btn.active {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            color: white;
+            border-color: #7c3aed;
+        }
+        
+        .profile-btn .profile-icon {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+        
+        .profile-btn .profile-label {
+            font-size: 13px;
+            display: block;
+            opacity: 0.8;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* Architecture Animation Styles */
+        .architecture-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 20px;
+            padding: 20px 10px;
+            overflow: hidden;
+            flex-wrap: wrap;
+        }
+
+        .arch-box {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 115px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideInBox 0.5s ease-out forwards;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            will-change: transform, opacity;
+            line-height: 1.3;
+            cursor: default;
+        }
+        
+        /* Specific adjustments for Agentic AI mode */
+        .mode-description.agentic .arch-box {
+            min-width: 100px;
+            padding: 8px 10px;
+            font-size: 10px;
+        }
+        
+        .mode-description.agentic .architecture-flow {
+            gap: 4px;
+            padding: 15px 5px;
+        }
+
+        .arch-box.frontend {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            color: #1d4ed8;
+        }
+
+        .arch-box.backend {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            color: #047857;
+        }
+
+        .arch-box.elasticsearch {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            color: #d97706;
+        }
+
+        .arch-box.openai {
+            border-color: #8b5cf6;
+            background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+            color: #6b21a8;
+        }
+        
+        /* Green theme for OpenAI box in AI Search mode */
+        .mode-description:not(.keyword):not(.date):not(.agentic) .arch-box.openai {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            color: #047857;
+        }
+
+        .arch-box.userprofile {
+            border-color: #ec4899;
+            background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+            color: #be185d;
+        }
+
+        .arch-arrow {
+            width: 30px;
+            height: 2px;
+            background: #94a3b8;
+            position: relative;
+            opacity: 0;
+            animation: fadeInArrow 0.3s ease-out forwards;
+            will-change: opacity;
+        }
+        
+        /* Smaller arrows for Agentic AI mode */
+        .mode-description.agentic .arch-arrow {
+            width: 20px;
+        }
+
+        .arch-arrow::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-right: 6px solid #94a3b8;
+            border-top: 3px solid transparent;
+            border-bottom: 3px solid transparent;
+        }
+
+        .arch-arrow::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid #94a3b8;
+            border-top: 3px solid transparent;
+            border-bottom: 3px solid transparent;
+        }
+
+        @keyframes slideInBox {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInArrow {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Stagger animations */
+        .arch-box:nth-child(1) { animation-delay: 0.2s; }
+        .arch-arrow:nth-child(2) { animation-delay: 0.4s; }
+        .arch-box:nth-child(3) { animation-delay: 0.6s; }
+        .arch-arrow:nth-child(4) { animation-delay: 0.8s; }
+        .arch-box:nth-child(5) { animation-delay: 1.0s; }
+        .arch-arrow:nth-child(6) { animation-delay: 1.2s; }
+        .arch-box:nth-child(7) { animation-delay: 1.4s; }
+        .arch-arrow:nth-child(8) { animation-delay: 1.6s; }
+        .arch-box:nth-child(9) { animation-delay: 1.8s; }
+        
+        .ai-summary {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 24px 0;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .ai-summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .ai-summary-title {
+            color: #10b981;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .openai-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+            margin-left: 16px;
+        }
+        
+        .agentic-summary {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 24px 0;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(168, 85, 247, 0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .personal-advisor {
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+            border: 2px solid #7c3aed;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .personal-advisor::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+        }
+        
+        .advisor-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .advisor-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+        }
+        
+        .advisor-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #6b21a8;
+        }
+        
+        .advisor-subtitle {
+            font-size: 13px;
+            color: #7c3aed;
+            margin-left: 52px;
+            margin-top: -10px;
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+        
+        .advisor-content {
+            color: #6b21a8;
+            line-height: 1.7;
+            font-size: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .advisor-content strong {
+            color: #581c87;
+            font-weight: 600;
+        }
+        
+        .budget-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid #a855f7;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: #7c3aed;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+        
+        .premium-badge {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: 1px solid #d97706;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: white;
+            font-weight: 600;
+            margin-left: 12px;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+        
+        .agentic-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+        }
+        
+        .agentic-title {
+            color: #a855f7;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .agentic-badge {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
+            margin-left: 16px;
+        }
+        
+        .pros-cons-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+        
+        .pros-section, .cons-section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .pros-section {
+            border-left: 4px solid #10b981;
+        }
+        
+        .cons-section {
+            border-left: 4px solid #ef4444;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .pros-section .section-title {
+            color: #10b981;
+        }
+        
+        .cons-section .section-title {
+            color: #ef4444;
+        }
+        
+        .pro-con-item {
+            margin-bottom: 16px;
+            padding-left: 24px;
+            position: relative;
+        }
+        
+        .pro-con-item:before {
+            content: '•';
+            position: absolute;
+            left: 8px;
+            font-size: 20px;
+        }
+        
+        .pros-section .pro-con-item:before {
+            color: #10b981;
+        }
+        
+        .cons-section .pro-con-item:before {
+            color: #ef4444;
+        }
+        
+        .pro-con-text {
+            color: #475569;
+            line-height: 1.6;
+        }
+        
+        .agentic-footer {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(168, 85, 247, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .analysis-stats {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid #a855f7;
+            color: #a855f7;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            background: #a855f7;
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .search-query {
+            color: #10b981;
+            font-weight: 600;
+            font-style: italic;
+            margin-bottom: 16px;
+        }
+        
+        .summary-text {
+            color: #475569;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+        
+        .close-summary {
+            background: transparent;
+            border: 1px solid #10b981;
+            color: #10b981;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .close-summary:hover {
+            background: #10b981;
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .keyword-results {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(14, 165, 233, 0.1);
+        }
+        
+        .keyword-results-header {
+            color: #0ea5e9;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .search-stats {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        
+        .review {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+        
+        .review:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .reviewer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .reviewer-name {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 15px;
+        }
+        
+        .reviewer-location {
+            color: #64748b;
+            font-size: 13px;
+        }
+        
+        .review-date {
+            color: #64748b;
+            font-size: 13px;
+        }
+        
+        .product-description {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        
+        .stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 16px;
+        }
+        
+        .star {
+            color: #f59e0b;
+            font-size: 18px;
+        }
+        
+        .star.empty {
+            color: #e2e8f0;
+        }
+        
+        .review-title {
+            font-weight: 600;
+            color: #0f172a;
+            font-size: 17px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .review-text {
+            color: #475569;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .review-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(226, 232, 240, 0.8);
+            padding-top: 20px;
+        }
+        
+        .helpful-count {
+            color: #64748b;
+            font-size: 13px;
+        }
+        
+        .review-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            background: transparent;
+            border: 1px solid rgba(203, 213, 225, 0.8);
+            color: #64748b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+        
+        .arch-box span {
+            display: block;
+            font-weight: 600;
+        }
+        
+        .arch-box small {
+            font-size: 10px;
+            opacity: 0.7;
+            display: block;
+            margin-top: 2px;
+        }
+        
+        .verified {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 16px 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading-message {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+            font-size: 16px;
+        }
+        
+        .no-search-mode {
+            text-align: center;
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        
+        .history-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.2);
+            transform: translateX(4px);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        function AppleWatchReviews() {
+            // Search mode constants
+            const SEARCH_MODES = {
+                AI: 'ai',
+                KEYWORD: 'keyword', 
+                DATE: 'date',
+                AGENTIC_AI: 'agentic'
+            };
+
+            // State management
+            const [searchMode, setSearchMode] = React.useState(SEARCH_MODES.DATE);
+            const [reviews, setReviews] = React.useState([]);
+            const [loadingReviews, setLoadingReviews] = React.useState(false);
+            const [error, setError] = React.useState(null);
+            const [currentUser, setCurrentUser] = React.useState('Student2025');
+            
+            // AI search state
+            const [aiQuery, setAiQuery] = React.useState('');
+            const [aiSummary, setAiSummary] = React.useState(null);
+            const [aiLoading, setAiLoading] = React.useState(false);
+            const [aiError, setAiError] = React.useState(null);
+
+            // Keyword search state
+            const [keywordQuery, setKeywordQuery] = React.useState('');
+            const [keywordResults, setKeywordResults] = React.useState(null);
+            const [keywordLoading, setKeywordLoading] = React.useState(false);
+            const [keywordError, setKeywordError] = React.useState(null);
+
+            // Agentic AI state
+            const [agenticSummary, setAgenticSummary] = React.useState(null);
+            const [agenticLoading, setAgenticLoading] = React.useState(false);
+            const [agenticError, setAgenticError] = React.useState(null);
+
+            // Track animation key to force re-render
+            const [animationKey, setAnimationKey] = React.useState(0);
+
+            // Backend configuration
+            const BACKEND_URL = "http://localhost:8001";
+
+            // Logging system
+            const logToConsole = (level, message, data = null) => {
+                const timestamp = new Date().toISOString();
+                console.log(`[${timestamp}] ${level.toUpperCase()}: ${message}`, data || '');
+            };
+
+            // Switch search mode and clear previous results
+            const switchSearchMode = (mode) => {
+                setSearchMode(mode);
+                setError(null);
+                setAiSummary(null);
+                setAiError(null);
+                setKeywordResults(null);
+                setKeywordError(null);
+                setAgenticSummary(null);
+                setAgenticError(null);
+                
+                // Increment animation key to force re-render of animation
+                setAnimationKey(prev => prev + 1);
+                
+                // Load reviews for date mode immediately
+                if (mode === SEARCH_MODES.DATE) {
+                    loadAllReviews();
+                } else if (mode === SEARCH_MODES.AGENTIC_AI) {
+                    // Automatically generate summary when switching to Agentic AI mode
+                    generateAgenticSummary(currentUser);
+                    // Also load all reviews to display below the summary
+                    loadAllReviews();
+                }
+            };
+
+            // Load all reviews sorted by date
+            const loadAllReviews = async () => {
+                try {
+                    setLoadingReviews(true);
+                    setError(null);
+                    
+                    logToConsole('info', 'Loading all reviews by date');
+                    
+                    const response = await fetch(`${BACKEND_URL}/search-reviews`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                        throw new Error(errorData.message || `Backend error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.status !== 'success') {
+                        throw new Error(data.message || 'Backend returned error status');
+                    }
+
+                    logToConsole('success', 'Reviews loaded successfully', {
+                        total: data.total,
+                        count: data.reviews.length
+                    });
+
+                    setReviews(data.reviews);
+                } catch (err) {
+                    logToConsole('error', 'Backend connection failed', {
+                        error: err.message,
+                        backend: BACKEND_URL
+                    });
+                    
+                    setError(`Backend connection failed: ${err.message}`);
+                    
+                    // Fallback to static data
+                    setReviews(staticReviewsData);
+                } finally {
+                    setLoadingReviews(false);
+                }
+            };
+
+            // Perform AI semantic search
+            const performAiSearch = async () => {
+                if (!aiQuery.trim()) {
+                    setAiError('Please enter a search query');
+                    return;
+                }
+
+                try {
+                    setAiLoading(true);
+                    setAiError(null);
+                    setAiSummary(null);
+                    
+                    logToConsole('info', 'Performing AI semantic search', { query: aiQuery });
+                    
+                    const response = await fetch(`${BACKEND_URL}/semantic-search`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            text: aiQuery
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                        throw new Error(errorData.message || `Search failed: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.status !== 'success') {
+                        throw new Error(data.message || 'Search returned error status');
+                    }
+
+                    logToConsole('success', 'AI search completed', {
+                        query: data.query,
+                        totalResults: data.total_results
+                    });
+
+                    setAiSummary(data);
+                    
+                } catch (err) {
+                    logToConsole('error', 'AI search failed', { error: err.message });
+                    setAiError(`AI search failed: ${err.message}`);
+                } finally {
+                    setAiLoading(false);
+                }
+            };
+
+            // Perform keyword search
+            const performKeywordSearch = async () => {
+                if (!keywordQuery.trim()) {
+                    setKeywordError('Please enter a search query');
+                    return;
+                }
+
+                try {
+                    setKeywordLoading(true);
+                    setKeywordError(null);
+                    setKeywordResults(null);
+                    
+                    logToConsole('info', 'Performing keyword search', { query: keywordQuery });
+                    
+                    const response = await fetch(`${BACKEND_URL}/keyword-search`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            query: keywordQuery
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                        throw new Error(errorData.message || `Search failed: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.status !== 'success') {
+                        throw new Error(data.message || 'Search returned error status');
+                    }
+
+                    logToConsole('success', 'Keyword search completed', {
+                        query: data.query,
+                        totalResults: data.total
+                    });
+
+                    setKeywordResults(data);
+                    setReviews(data.reviews);
+                    
+                } catch (err) {
+                    logToConsole('error', 'Keyword search failed', { error: err.message });
+                    setKeywordError(`Keyword search failed: ${err.message}`);
+                } finally {
+                    setKeywordLoading(false);
+                }
+            };
+
+            // Generate Agentic AI summary
+            const generateAgenticSummary = async (username) => {
+                try {
+                    setAgenticLoading(true);
+                    setAgenticError(null);
+                    setAgenticSummary(null);
+                    
+                    logToConsole('info', 'Generating Agentic AI summary for user', { username });
+                    
+                    const response = await fetch(`${BACKEND_URL}/agentic-summary`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: username
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                        throw new Error(errorData.message || `Summary generation failed: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.status !== 'success') {
+                        throw new Error(data.message || 'Summary generation returned error status');
+                    }
+
+                    logToConsole('success', 'Agentic AI summary completed', {
+                        totalReviews: data.total_reviews_analyzed,
+                        prosCount: data.pros?.length || 0,
+                        consCount: data.cons?.length || 0,
+                        hasPersonalizedRecommendation: !!data.personalized_recommendation,
+                        username: data.username
+                    });
+
+                    setAgenticSummary(data);
+                    
+                } catch (err) {
+                    logToConsole('error', 'Agentic AI summary failed', { error: err.message });
+                    setAgenticError(`Agentic AI summary failed: ${err.message}`);
+                } finally {
+                    setAgenticLoading(false);
+                }
+            };
+
+            // Switch user profile
+            const switchUserProfile = (username) => {
+                setCurrentUser(username);
+                if (searchMode === SEARCH_MODES.AGENTIC_AI) {
+                    generateAgenticSummary(username);
+                }
+            };
+
+            // Handle Enter key presses
+            const handleAiKeyPress = (e) => {
+                if (e.key === 'Enter') {
+                    performAiSearch();
+                }
+            };
+
+            const handleKeywordKeyPress = (e) => {
+                if (e.key === 'Enter') {
+                    performKeywordSearch();
+                }
+            };
+
+            // Initialize with List Reviews mode
+            React.useEffect(() => {
+                loadAllReviews();
+                // Trigger initial animation
+                setAnimationKey(1);
+            }, []);
+
+            // Render stars
+            const renderStars = (rating) => {
+                return Array.from({ length: 5 }, (_, index) => (
+                    <span key={index} className={`star ${index < rating ? '' : 'empty'}`}>
+                        ★
+                    </span>
+                ));
+            };
+
+            // Static fallback data
+            const staticReviewsData = [
+                {
+                    id: 1,
+                    date: "2025-01-15",
+                    username: "TechEnthusiast92",
+                    location: "California, United States",
+                    product_description: "Apple Watch Series 10 GPS + Cellular 46mm Jet Black Aluminum Case with Jet Black Sport Loop",
+                    stars: 5,
+                    title: "Best Apple Watch yet - the larger display is game changing",
+                    description: "I've owned every Apple Watch since the original, and the Series 10 is by far the best iteration. The larger display makes everything more readable and the thinner profile feels great on the wrist. Battery life easily gets me through a full day with heavy usage including workouts, calls, and notifications.",
+                    helpful_count: 147,
+                    verified_purchase: true
+                },
+                {
+                    id: 2,
+                    date: "2025-01-12", 
+                    username: "FitnessTracker",
+                    location: "New York, United States",
+                    product_description: "Apple Watch Series 10 GPS 42mm Silver Aluminum Case with White Sport Band",
+                    stars: 4,
+                    title: "Great for workouts but battery could be better",
+                    description: "Love using this for my daily runs and gym sessions. The fitness tracking is incredibly accurate and the health sensors work flawlessly. However, I find myself charging it more often than I'd like, especially on days with longer workouts.",
+                    helpful_count: 89,
+                    verified_purchase: true
+                }
+            ];
+
+            // Render architecture animation based on mode
+            const renderArchitectureAnimation = (mode) => {
+                switch (mode) {
+                    case SEARCH_MODES.DATE:
+                        return (
+                            <div className="architecture-flow" key={animationKey}>
+                                <div className="arch-box frontend">React Frontend</div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box backend">Python Backend</div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box elasticsearch">
+                                    <span>Elasticsearch</span>
+                                    <small>Date Sort</small>
+                                </div>
+                            </div>
+                        );
+                    
+                    case SEARCH_MODES.KEYWORD:
+                        return (
+                            <div className="architecture-flow" key={animationKey}>
+                                <div className="arch-box frontend">React Frontend</div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box backend">Python Backend</div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box elasticsearch">
+                                    <span>Elasticsearch</span>
+                                    <small>Keyword Search</small>
+                                </div>
+                            </div>
+                        );
+                    
+                    case SEARCH_MODES.AI:
+                        return (
+                            <div className="architecture-flow" key={animationKey}>
+                                <div className="arch-box frontend">React Frontend</div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box backend">Python Backend</div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box elasticsearch">
+                                    <span>Elasticsearch</span>
+                                    <small>Semantic Review Search</small>
+                                </div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box openai">OpenAI</div>
+                            </div>
+                        );
+                    
+                    case SEARCH_MODES.AGENTIC_AI:
+                        return (
+                            <div className="architecture-flow" key={animationKey}>
+                                <div className="arch-box frontend">React Frontend</div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box backend">Python Backend</div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box elasticsearch">
+                                    <span>Elasticsearch</span>
+                                    <small>Semantic Review Search</small>
+                                </div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box userprofile">
+                                    <span>User Profile Service</span>
+                                    <small>Semantic Profile Search</small>
+                                </div>
+                                <div className="arch-arrow"></div>
+                                <div className="arch-box openai">OpenAI</div>
+                            </div>
+                        );
+                    
+                    default:
+                        return null;
+                }
+            };
+
+            // Render search section based on mode
+            const renderSearchSection = () => {
+                switch (searchMode) {
+                    case SEARCH_MODES.AI:
+                        return (
+                            <>
+                                <div className="mode-description">
+                                    🤖 <strong>AI-Powered Search:</strong> Ask natural language questions about the reviews. Uses semantic search with ELSER and OpenAI to provide intelligent summaries.
+                                    {renderArchitectureAnimation(SEARCH_MODES.AI)}
+                                </div>
+                                <div className="search-container">
+                                    <input
+                                        type="text"
+                                        className="search-input"
+                                        placeholder="Ask anything about the reviews (e.g., 'battery life issues', 'display quality')"
+                                        value={aiQuery}
+                                        onChange={(e) => setAiQuery(e.target.value)}
+                                        onKeyPress={handleAiKeyPress}
+                                    />
+                                    <button 
+                                        className="search-btn ai-search-btn"
+                                        onClick={performAiSearch}
+                                        disabled={aiLoading || !aiQuery.trim()}
+                                    >
+                                        {aiLoading ? '🤖 Searching...' : 'AI Search'}
+                                    </button>
+                                </div>
+                            </>
+                        );
+                    
+                    case SEARCH_MODES.KEYWORD:
+                        return (
+                            <>
+                                <div className="mode-description keyword">
+                                    🔍 <strong>Keyword Search:</strong> Traditional text-based search across review titles and descriptions using Elasticsearch multi-match queries.
+                                    {renderArchitectureAnimation(SEARCH_MODES.KEYWORD)}
+                                </div>
+                                <div className="search-container">
+                                    <input
+                                        type="text"
+                                        className="search-input"
+                                        placeholder="Enter keywords (e.g., 'battery', 'display', 'workout')"
+                                        value={keywordQuery}
+                                        onChange={(e) => setKeywordQuery(e.target.value)}
+                                        onKeyPress={handleKeywordKeyPress}
+                                    />
+                                    <button 
+                                        className="search-btn keyword-search-btn"
+                                        onClick={performKeywordSearch}
+                                        disabled={keywordLoading || !keywordQuery.trim()}
+                                    >
+                                        {keywordLoading ? '🔍 Searching...' : 'Search Reviews'}
+                                    </button>
+                                </div>
+                            </>
+                        );
+                    
+                    case SEARCH_MODES.DATE:
+                        return (
+                            <div className="mode-description date">
+                                📅 <strong>Browse All Reviews:</strong> View all reviews sorted by date (newest first). No search - just browse the complete collection.
+                                {renderArchitectureAnimation(SEARCH_MODES.DATE)}
+                            </div>
+                        );
+                    
+                    case SEARCH_MODES.AGENTIC_AI:
+                        return (
+                            <>
+                                <div className="mode-description agentic">
+                                    🧠 <strong>Agentic AI Analysis:</strong> Automatically analyzes all reviews to provide personalized recommendations based on your profile, plus extracts the top 3 pros and cons. Uses advanced AI with user profile data for budget-conscious suggestions.
+                                    {renderArchitectureAnimation(SEARCH_MODES.AGENTIC_AI)}
+                                </div>
+                                
+                                <div className="user-profile-switcher">
+                                    <div className="profile-switcher-title">
+                                        👥 Try different user profiles!
+                                    </div>
+                                    <div className="profile-switcher-subtitle">
+                                        See how recommendations change based on your budget and needs
+                                    </div>
+                                    <div className="profile-buttons">
+                                        <button 
+                                            className={`profile-btn ${currentUser === 'Student2025' ? 'active' : ''}`}
+                                            onClick={() => switchUserProfile('Student2025')}
+                                        >
+                                            <span className="profile-icon">🎓</span>
+                                            <span>Student2025</span>
+                                            <span className="profile-label">Budget-Conscious Student</span>
+                                        </button>
+                                        <button 
+                                            className={`profile-btn ${currentUser === 'TechUser92' ? 'active' : ''}`}
+                                            onClick={() => switchUserProfile('TechUser92')}
+                                        >
+                                            <span className="profile-icon">💼</span>
+                                            <span>TechUser92</span>
+                                            <span className="profile-label">Tech Professional</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        );
+                    
+                    default:
+                        return null;
+                }
+            };
+
+            return (
+                <div className="main-container">
+                    <div className="content-area">
+                        <div className="glass-card header-card">
+                            <div className="logo">
+                                <img 
+                                    src="https://m.media-amazon.com/images/S/al-na-9d5791cf-3faf/d7a44188-4287-4abb-b1c5-e6a55c551f1a._CR0,0,1200,628_SX860_CB1169409_QL70_.jpg" 
+                                    alt="Apple Watch Series 10"
+                                />
+                            </div>
+                            <h1>Apple Watch Series 10 Reviews</h1>
+                            <p className="subtitle">Intelligent search powered by AI and semantic understanding</p>
+                        </div>
+                        
+                        <div className="glass-card">
+                            <div className="search-modes-instruction">
+                                Try the search experiences to see the evolution!
+                            </div>
+                            <div className="mode-toggles">
+                                <button 
+                                    className={`mode-btn agentic ${searchMode === SEARCH_MODES.AGENTIC_AI ? 'active' : ''}`}
+                                    onClick={() => {
+                                        if (searchMode === SEARCH_MODES.AGENTIC_AI) {
+                                            // If already on this mode, just increment animation key
+                                            setAnimationKey(prev => prev + 1);
+                                        } else {
+                                            switchSearchMode(SEARCH_MODES.AGENTIC_AI);
+                                        }
+                                    }}
+                                >
+                                    Agentic AI
+                                </button>
+                                <button 
+                                    className={`mode-btn ai ${searchMode === SEARCH_MODES.AI ? 'active' : ''}`}
+                                    onClick={() => {
+                                        if (searchMode === SEARCH_MODES.AI) {
+                                            // If already on this mode, just increment animation key
+                                            setAnimationKey(prev => prev + 1);
+                                        } else {
+                                            switchSearchMode(SEARCH_MODES.AI);
+                                        }
+                                    }}
+                                >
+                                    AI Search
+                                </button>
+                                <button 
+                                    className={`mode-btn keyword ${searchMode === SEARCH_MODES.KEYWORD ? 'active' : ''}`}
+                                    onClick={() => {
+                                        if (searchMode === SEARCH_MODES.KEYWORD) {
+                                            // If already on this mode, just increment animation key
+                                            setAnimationKey(prev => prev + 1);
+                                        } else {
+                                            switchSearchMode(SEARCH_MODES.KEYWORD);
+                                        }
+                                    }}
+                                >
+                                    Keyword Search
+                                </button>
+                                <button 
+                                    className={`mode-btn date ${searchMode === SEARCH_MODES.DATE ? 'active' : ''}`}
+                                    onClick={() => {
+                                        if (searchMode === SEARCH_MODES.DATE) {
+                                            // If already on this mode, just increment animation key
+                                            setAnimationKey(prev => prev + 1);
+                                        } else {
+                                            switchSearchMode(SEARCH_MODES.DATE);
+                                        }
+                                    }}
+                                >
+                                    List Reviews
+                                </button>
+                              </div>
+                            
+                            <div className="search-section">
+                                {renderSearchSection()}
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="error-message">
+                                <div>{error}</div>
+                                <div style={{ fontSize: '13px', marginTop: '8px', opacity: 0.8 }}>
+                                    💡 Make sure Python backend is running: <code>python3 appv2.py</code>
+                                </div>
+                            </div>
+                        )}
+
+                        {aiError && searchMode === SEARCH_MODES.AI && (
+                            <div className="error-message">
+                                AI Search Error: {aiError}
+                            </div>
+                        )}
+
+                        {keywordError && searchMode === SEARCH_MODES.KEYWORD && (
+                            <div className="error-message">
+                                Keyword Search Error: {keywordError}
+                            </div>
+                        )}
+
+                        {agenticError && searchMode === SEARCH_MODES.AGENTIC_AI && (
+                            <div className="error-message">
+                                Agentic AI Error: {agenticError}
+                            </div>
+                        )}
+
+                        {agenticLoading && searchMode === SEARCH_MODES.AGENTIC_AI && (
+                            <div className="loading-message">
+                                🧠 Analyzing all reviews to extract insights for {currentUser}...
+                            </div>
+                        )}
+
+                        {agenticSummary && searchMode === SEARCH_MODES.AGENTIC_AI && (
+                            <div className="agentic-summary">
+                                <div className="agentic-header">
+                                    <div>
+                                        <span className="agentic-title">AI-Generated Product Insights</span>
+                                        <span className="agentic-badge">Agentic AI</span>
+                                    </div>
+                                    <button 
+                                        className="refresh-btn" 
+                                        onClick={() => generateAgenticSummary(currentUser)}
+                                    >
+                                        Refresh Analysis
+                                    </button>
+                                </div>
+                                
+                                {agenticSummary.personalized_recommendation && (
+                                    <div className="personal-advisor">
+                                        <div className="advisor-header">
+                                            <div className="advisor-icon">💡</div>
+                                            <div className="advisor-title">
+                                                Your Personal Advisor
+                                                {agenticSummary.username === 'Student2025' ? 
+                                                    <span className="budget-badge">Budget-Conscious</span> :
+                                                    <span className="premium-badge">Premium Focus</span>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="advisor-subtitle">
+                                            Personalized recommendation based on your profile and purchase history
+                                        </div>
+                                        <div className="advisor-content">
+                                            {agenticSummary.personalized_recommendation}
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                <div className="pros-cons-container">
+                                    <div className="pros-section">
+                                        <div className="section-title">
+                                            <span>✅</span>
+                                            <span>Top 3 Pros</span>
+                                        </div>
+                                        {agenticSummary.pros?.map((pro, index) => (
+                                            <div key={index} className="pro-con-item">
+                                                <div className="pro-con-text">{pro}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    
+                                    <div className="cons-section">
+                                        <div className="section-title">
+                                            <span>❌</span>
+                                            <span>Top 3 Cons</span>
+                                        </div>
+                                        {agenticSummary.cons?.map((con, index) => (
+                                            <div key={index} className="pro-con-item">
+                                                <div className="pro-con-text">{con}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                <div className="agentic-footer">
+                                    <div className="analysis-stats">
+                                        Analyzed {agenticSummary.total_reviews_analyzed} reviews • 
+                                        Generated in {agenticSummary.processing_time}ms
+                                        {agenticSummary.user_profile_loaded && ` • Profile: ${agenticSummary.username}`}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {aiSummary && searchMode === SEARCH_MODES.AI && (
+                            <div className="ai-summary">
+                                <div className="ai-summary-header">
+                                    <div>
+                                        <span className="ai-summary-title">AI-Powered Search Results</span>
+                                        <span className="openai-badge">OpenAI + ELSER</span>
+                                    </div>
+                                    <button 
+                                        className="close-summary" 
+                                        onClick={() => setAiSummary(null)}
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                                
+                                <div className="search-query">
+                                    Search: "{aiSummary.query}"
+                                </div>
+                                
+                                <div className="search-stats">
+                                    Found {aiSummary.total_results} relevant reviews • Relevance score: {aiSummary.search_score?.toFixed(2)}
+                                </div>
+                                
+                                <div className="summary-text">
+                                    {aiSummary.summary}
+                                </div>
+                            </div>
+                        )}
+
+                        {keywordResults && searchMode === SEARCH_MODES.KEYWORD && (
+                            <div className="keyword-results">
+                                <div className="keyword-results-header">
+                                    🔍 Keyword Search Results
+                                </div>
+                                <div className="search-stats">
+                                    Query: "{keywordResults.query}" • Found {keywordResults.total} matching reviews
+                                </div>
+                            </div>
+                        )}
+
+                        {loadingReviews && (
+                            <div className="loading-message">
+                                Loading reviews from Elasticsearch...
+                            </div>
+                        )}
+
+                        {!loadingReviews && reviews.map((review) => (
+                            <div key={review.id} className="review">
+                                <div className="review-header">
+                                    <div className="reviewer-info">
+                                        <div className="reviewer-name">
+                                            {review.username}
+                                            {review.verified_purchase && <span className="verified">Verified Purchase</span>}
+                                        </div>
+                                        <div className="reviewer-location">{review.location}</div>
+                                    </div>
+                                    <div className="review-date">{review.date}</div>
+                                </div>
+                                
+                                <div className="product-description">{review.product_description}</div>
+                                
+                                <div className="stars">
+                                    {renderStars(review.stars)}
+                                </div>
+                                
+                                <div className="review-title">{review.title}</div>
+                                
+                                <div className="review-text">{review.description}</div>
+                                
+                                <div className="review-footer">
+                                    <div className="helpful-count">
+                                        {review.helpful_count} people found this helpful
+                                    </div>
+                                    <div className="review-actions">
+                                        <button className="action-btn">Helpful</button>
+                                        <button className="action-btn">Report</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<AppleWatchReviews />, document.getElementById('root'));
+    </script>
+</body>
+</html>
