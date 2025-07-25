@@ -22,11 +22,11 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for all domains on all routes
 
 # Elasticsearch configuration
-ES_URL = "https://f5-logs-demo.es.us-east-2.aws.elastic-cloud.com:9243"
-ES_API_KEY = "S2t0OExwZ0JOaDhIaVRqOS1yS2M6b01TUWZVMDNPMUs1Nm9mMm40cWg2dw=="
+ES_URL = "<YOUR ES URL>"
+ES_API_KEY = "<YOUR ES API KEY>"
 
 # OpenAI configuration
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = "<YOUR OpenAI API KEY>"
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Default user (in production, this would come from auth)
